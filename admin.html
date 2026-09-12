@@ -214,10 +214,10 @@
     </div>
 
 <script>
-    // Agar Vercel backend URL alag hai toh localhost ki jagah wo URL yahan likhein
-    const API_URL = window.location.hostname === "localhost" 
-        ? "http://localhost:5000/api/products" 
-        : "/api/products"; 
+    // ⚠️ YAHAN APNA BACKEND LINK SET KAREIN:
+    // Agar Localhost par backend chala rahe hain: "http://localhost:5000/api/products"
+    // Agar Backend Deploy kiya hua hai: "https://your-backend.onrender.com/api/products"
+    const API_URL = "http://localhost:5000/api/products"; 
 
     const CLOUD_NAME = "ez2dqiwx"; 
     const UPLOAD_PRESET = "my_preset";
@@ -226,7 +226,6 @@
     let angleImageUrls = [];
     let currentCategoryFilter = "all";
 
-    // Cloudinary Upload
     async function uploadToCloudinary(file) {
         const formData = new FormData();
         formData.append("file", file);
@@ -253,7 +252,7 @@
             mainImageUrl = await uploadToCloudinary(file);
             previewBox.innerHTML = `<img src="${mainImageUrl}" class="preview-img">`;
         } catch (err) {
-            alert("Image upload failed! Check Cloudinary settings.");
+            alert("Main image upload failed!");
             previewBox.innerHTML = "";
         }
     }
@@ -333,12 +332,11 @@
         fetchProducts();
     }
 
-    // Save Product
     document.getElementById("productForm")?.addEventListener("submit", async function(e) {
         e.preventDefault();
 
         if (!mainImageUrl) {
-            alert("Main image upload honay ka wait karein ya naye siray se image select karein!");
+            alert("Please wait for main image to upload or re-select it.");
             return;
         }
 
@@ -365,7 +363,7 @@
             });
 
             if (res.ok) {
-                alert("Product Successfully Saved!");
+                alert("Product Saved Successfully!");
                 this.reset();
                 mainImageUrl = "";
                 angleImageUrls = [];
@@ -378,7 +376,7 @@
             }
         } catch (err) {
             console.error("Save error:", err);
-            alert("Network Error: Express backend server chalu nahi hai ya URL wrong hai.");
+            alert("Backend connection failed! Ensure backend server is running and API_URL is correct.");
         }
     });
 
