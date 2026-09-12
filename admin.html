@@ -228,21 +228,16 @@
     </div>
 
    <script>
-    // ---------------- CONFIGURATION ----------------
-    // 1. Apne deployed Vercel backend ka URL yahan likhein (jaise: https://your-backend.vercel.app/api/products)
-    // Agar filhal local par hain toh localhost rehne dein
+    // Configuration
     const API_URL = "http://localhost:5000/api/products"; 
-
-    // 2. Apni Cloudinary details yahan daalein
     const CLOUD_NAME = "ez2dqiwx"; 
-const UPLOAD_PRESET = "my_preset";
-    // -----------------------------------------------
+    const UPLOAD_PRESET = "my_preset";
 
     let mainImageUrl = "";
     let angleImageUrls = [];
     let currentCategoryFilter = "all";
 
-    // Direct Cloudinary Upload Function
+    // Direct Cloudinary Upload
     async function uploadToCloudinary(file) {
         const formData = new FormData();
         formData.append("file", file);
@@ -253,24 +248,23 @@ const UPLOAD_PRESET = "my_preset";
             body: formData
         });
 
-        if (!res.ok) throw new Error("Cloudinary upload failed");
+        if (!res.ok) throw new Error("Upload failed");
         const data = await res.json();
-        return data.secure_url; // Returns clean image URL
+        return data.secure_url;
     }
 
-    // 1. Preview Functions (With Direct Cloudinary Upload)
     async function previewMainImg(event) {
         const file = event.target.files[0];
         if (!file) return;
 
         const previewBox = document.getElementById("mainImgPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading image...</p>`;
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
 
         try {
             mainImageUrl = await uploadToCloudinary(file);
             previewBox.innerHTML = `<img src="${mainImageUrl}" class="preview-img">`;
         } catch (err) {
-            alert("Image upload failed. Check Cloudinary settings!");
+            alert("Image upload failed!");
             previewBox.innerHTML = "";
         }
     }
@@ -281,7 +275,7 @@ const UPLOAD_PRESET = "my_preset";
 
         angleImageUrls = [];
         const previewBox = document.getElementById("angleImgsPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading images...</p>`;
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
 
         try {
             for (let file of files) {
@@ -298,7 +292,6 @@ const UPLOAD_PRESET = "my_preset";
         }
     }
 
-    // 2. Fetch Products
     async function fetchProducts() {
         try {
             const res = await fetch(`${API_URL}?category=${currentCategoryFilter}`);
@@ -316,7 +309,7 @@ const UPLOAD_PRESET = "my_preset";
             result.data.forEach(prod => {
                 tbody.innerHTML += `
                     <tr>
-                        <td><img src="${prod.mainImg}" alt="${prod.title}"></td>
+                        <td><img src="${prod.mainImg || prod.image}" alt="${prod.title}"></td>
                         <td><strong>${prod.title}</strong></td>
                         <td style="text-transform: capitalize;">${prod.category}</td>
                         <td style="color:#e21b23; font-weight:700;">${prod.price}</td>
@@ -335,7 +328,6 @@ const UPLOAD_PRESET = "my_preset";
         }
     }
 
-    // 3. Category Filter Tabs
     function setCategoryFilter(cat, btn) {
         currentCategoryFilter = cat;
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -343,7 +335,7 @@ const UPLOAD_PRESET = "my_preset";
         fetchProducts();
     }
 
-    // 4. Save Product
+    // Product Save with Safe Fallbacks
     document.getElementById("productForm")?.addEventListener("submit", async function(e) {
         e.preventDefault();
 
@@ -352,13 +344,21 @@ const UPLOAD_PRESET = "my_preset";
             return;
         }
 
+        // Catch values safely matching HTML IDs or Fallbacks
+        const categoryVal = document.getElementById("pCategory")?.value || "clothes";
+        const titleVal = document.getElementById("pTitle")?.value || "Default Title";
+        const priceVal = document.getElementById("pPrice")?.value || 0;
+        const descVal = document.getElementById("pDesc")?.value || "";
+
         const productData = {
-            category: document.getElementById("pCategory").value,
-            title: document.getElementById("pTitle").value,
-            price: document.getElementById("pPrice").value,
+            category: categoryVal,
+            title: titleVal,
+            price: Number(priceVal),
             mainImg: mainImageUrl,
+            image: mainImageUrl, // Safe fallback for backend Schema
             angles: angleImageUrls.length > 0 ? angleImageUrls : [mainImageUrl],
-            desc: document.getElementById("pDesc").value
+            desc: descVal,
+            description: descVal // Safe fallback
         };
 
         try {
@@ -369,8 +369,9 @@ const UPLOAD_PRESET = "my_preset";
             });
 
             const responseData = await res.json();
-            if (responseData.success) {
-                alert("Product saved successfully!");
+            
+            if (res.ok && responseData.success) {
+                alert("Product saved to Database!");
                 this.reset();
                 mainImageUrl = "";
                 angleImageUrls = [];
@@ -378,7 +379,7 @@ const UPLOAD_PRESET = "my_preset";
                 document.getElementById("angleImgsPreviewBox").innerHTML = "";
                 fetchProducts();
             } else {
-                alert("Error: " + (responseData.message || "Failed to save product"));
+                alert("Server Validation Error: " + (responseData.message || "Required fields missing"));
             }
         } catch (err) {
             console.error("Error saving product:", err);
@@ -386,7 +387,6 @@ const UPLOAD_PRESET = "my_preset";
         }
     });
 
-    // 5. Delete Product
     async function deleteProduct(id) {
         if (confirm("Are you sure you want to delete this product?")) {
             try {
