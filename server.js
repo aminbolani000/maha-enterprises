@@ -8,7 +8,11 @@ const app = express();
 
 // Middlewares
 app.use(cors());
-app.use(express.json());
+
+// Express ko 50MB tak ki heavy Base64 images receive karne ki permission
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB Connection
