@@ -227,66 +227,75 @@
 
     </div>
 
-    <script>
-    const API_URL = "http://localhost:5000/api/products";
+   <script>
+    // ---------------- CONFIGURATION ----------------
+    // 1. Apne deployed Vercel backend ka URL yahan likhein (jaise: https://your-backend.vercel.app/api/products)
+    // Agar filhal local par hain toh localhost rehne dein
+    const API_URL = "http://localhost:5000/api/products"; 
+
+    // 2. Apni Cloudinary details yahan daalein
+    const CLOUD_NAME = "ez2dqiwx"; 
+const UPLOAD_PRESET = "my_preset";
+    // -----------------------------------------------
+
     let mainImageUrl = "";
     let angleImageUrls = [];
     let currentCategoryFilter = "all";
 
-    // --- Image Compression Helper Function ---
-    function compressAndConvert(file, callback) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (e) => {
-            const img = new Image();
-            img.src = e.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const maxWidth = 800; // Image width ko max 800px kar dega
-                const scaleSize = maxWidth / img.width;
-                
-                if (scaleSize < 1) {
-                    canvas.width = maxWidth;
-                    canvas.height = img.height * scaleSize;
-                } else {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                }
+    // Direct Cloudinary Upload Function
+    async function uploadToCloudinary(file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", UPLOAD_PRESET);
 
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                
-                // Image quality ko 70% compress kar ke Base64 generate karega
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                callback(compressedBase64);
-            };
-        };
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) throw new Error("Cloudinary upload failed");
+        const data = await res.json();
+        return data.secure_url; // Returns clean image URL
     }
 
-    // 1. Preview Functions (With Compression)
-    function previewMainImg(event) {
+    // 1. Preview Functions (With Direct Cloudinary Upload)
+    async function previewMainImg(event) {
         const file = event.target.files[0];
-        if (file) {
-            compressAndConvert(file, (base64) => {
-                mainImageUrl = base64;
-                document.getElementById("mainImgPreviewBox").innerHTML = 
-                    `<img src="${mainImageUrl}" class="preview-img">`;
-            });
+        if (!file) return;
+
+        const previewBox = document.getElementById("mainImgPreviewBox");
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading image...</p>`;
+
+        try {
+            mainImageUrl = await uploadToCloudinary(file);
+            previewBox.innerHTML = `<img src="${mainImageUrl}" class="preview-img">`;
+        } catch (err) {
+            alert("Image upload failed. Check Cloudinary settings!");
+            previewBox.innerHTML = "";
         }
     }
 
-    function previewAngleImgs(event) {
+    async function previewAngleImgs(event) {
         const files = Array.from(event.target.files);
+        if (files.length === 0) return;
+
         angleImageUrls = [];
         const previewBox = document.getElementById("angleImgsPreviewBox");
-        previewBox.innerHTML = "";
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading images...</p>`;
 
-        files.forEach(file => {
-            compressAndConvert(file, (base64) => {
-                angleImageUrls.push(base64);
-                previewBox.innerHTML += `<img src="${base64}" class="preview-img">`;
+        try {
+            for (let file of files) {
+                const url = await uploadToCloudinary(file);
+                angleImageUrls.push(url);
+            }
+            previewBox.innerHTML = "";
+            angleImageUrls.forEach(url => {
+                previewBox.innerHTML += `<img src="${url}" class="preview-img">`;
             });
-        });
+        } catch (err) {
+            alert("Angle images upload failed!");
+            previewBox.innerHTML = "";
+        }
     }
 
     // 2. Fetch Products
@@ -339,7 +348,7 @@
         e.preventDefault();
 
         if (!mainImageUrl) {
-            alert("Please upload a main image first!");
+            alert("Please select and wait for main image upload!");
             return;
         }
 
@@ -361,7 +370,7 @@
 
             const responseData = await res.json();
             if (responseData.success) {
-                alert("Product saved to MongoDB Database!");
+                alert("Product saved successfully!");
                 this.reset();
                 mainImageUrl = "";
                 angleImageUrls = [];
@@ -369,7 +378,7 @@
                 document.getElementById("angleImgsPreviewBox").innerHTML = "";
                 fetchProducts();
             } else {
-                alert("Server error: " + (responseData.message || "Failed to save product"));
+                alert("Error: " + (responseData.message || "Failed to save product"));
             }
         } catch (err) {
             console.error("Error saving product:", err);
