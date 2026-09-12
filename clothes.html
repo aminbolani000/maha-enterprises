@@ -248,31 +248,30 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            console.log("Clothes Page Loaded with Top Banner Image!");
-        });
-    </script>
-<!-- Aapki file ke aakhir mein yeh code laga dein -->
-    <script>
-        // Function to load products dynamically from Admin storage
-        function loadProductsForCurrentPage() {
-            const productsContainer = document.getElementById("productsContainer");
-            if (!productsContainer) return; // Agar page par container na ho toh skip karein
+    const API_URL = "https://maha-enterprises-production.up.railway.app/api/products";
 
-            // LocalStorage se data laayein
-            const storedProducts = localStorage.getItem("maha_products");
-            const products = storedProducts ? JSON.parse(storedProducts) : [];
+    async function loadProductsForCurrentPage() {
+        const productsContainer = document.getElementById("productsContainer");
+        if (!productsContainer) return;
 
-            // Check karein ki abhi konsa page khula hai (e.g., clothes.html)
+        try {
+            // Railway Backend se data fetch karein
+            const res = await fetch(API_URL);
+            if (!res.ok) throw new Error("Database fetch failed");
+
+            const result = await res.json();
+            const products = Array.isArray(result) ? result : (result.data || []);
+
+            // Check karein konsa page khula hai
             const currentPage = window.location.pathname.split("/").pop().replace(".html", "");
 
-            // Filter products based on current page category
+            // Category filtering logic
             const filteredProducts = products.filter(p => {
                 if (currentPage === "clothes") return p.category === "clothes";
                 if (currentPage === "shoes") return p.category === "shoes";
                 if (currentPage === "watch") return p.category === "watches";
                 if (currentPage === "perfium") return p.category === "perfumes";
-                return true; // index.html par sab dikhayega
+                return true; // index.html ya main shop page par sab dikhayega
             });
 
             if (filteredProducts.length === 0) {
@@ -280,14 +279,16 @@
                 return;
             }
 
-            // Grid ko clear karke naye products render karein
+            // Products display karein
             productsContainer.innerHTML = "";
             filteredProducts.forEach(product => {
-                // Aapke clothes.html page ka design structure
+                const img = product.mainImg || product.image || "";
+                const id = product._id || product.id; // MongoDB ID match
+
                 const productHTML = `
-                    <a href="product-detail.html?id=${product.id}" class="product-card">
+                    <a href="product-detail.html?id=${id}" class="product-card">
                         <div class="product-image-box">
-                            <img src="${product.mainImg}" alt="${product.title}">
+                            <img src="${img}" alt="${product.title}">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">${product.title}</h3>
@@ -298,15 +299,13 @@
                 `;
                 productsContainer.innerHTML += productHTML;
             });
+        } catch (err) {
+            console.error("Error loading products:", err);
+            productsContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Error loading products from server.</p>`;
         }
+    }
 
-        // Redirect to product-detail.html with ID
-        function viewProduct(id) {
-            window.location.href = `product-detail.html?id=${id}`;
-        }
-
-        // Page load hote hi run karein
-        document.addEventListener("DOMContentLoaded", loadProductsForCurrentPage);
-    </script>
+    document.addEventListener("DOMContentLoaded", loadProductsForCurrentPage);
+</script>
 </body>
 </html>
