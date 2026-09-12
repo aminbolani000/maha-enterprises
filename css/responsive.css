@@ -1,0 +1,348 @@
+/* ==========================================================================
+   MAHA ENTERPRISES - RESPONSIVE STYLESHEET (responsive.css)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESKTOP & LARGE DISPLAY TWEAKS (Max-Width: 1200px)
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 1200px) {
+    :root {
+        --section-padding: 80px 0;
+    }
+
+    .hero-title {
+        font-size: 3.2rem;
+    }
+
+    .collections-grid,
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    .card-image-wrapper {
+        padding-top: 80%; /* Adjusted aspect ratio for 2x2 grid */
+    }
+
+    .footer-grid {
+        grid-template-columns: 1.5fr 1fr 1.5fr;
+        gap: 32px;
+    }
+
+    .footer-social {
+        grid-column: span 3;
+        margin-top: 20px;
+    }
+
+    .footer-social-icons {
+        justify-content: flex-start;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. TABLET STYLES (Max-Width: 992px)
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 992px) {
+    :root {
+        --header-height: 70px;
+        --section-padding: 70px 0;
+    }
+
+    /* Navigation Mobile Drawer Setup */
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        max-width: 380px;
+        height: 100vh;
+        background-color: var(--black-base);
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px;
+        gap: 24px;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        transition: right var(--transition-smooth);
+        z-index: 1000;
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .nav-link {
+        color: var(--white-base);
+        font-size: 1.2rem;
+    }
+
+    .nav-actions .nav-btn {
+        display: none; /* Hide top header button, shown in drawer on small screens if needed */
+    }
+
+    /* Hero Section */
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .hero-actions {
+        justify-content: center;
+    }
+
+    .hero-image-wrapper {
+        transform: none; /* Disable 3D tilt on mobile/tablets for performance */
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* About Section */
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .about-image-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Location Grid */
+    .location-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .location-image-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Social Grid */
+    .social-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Catalog Card */
+    .catalog-card {
+        padding: 40px 30px;
+        text-align: center;
+    }
+
+    .catalog-content {
+        margin: 0 auto;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   3. MOBILE STYLES (Max-Width: 768px)
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 768px) {
+    :root {
+        --section-padding: 60px 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .hero-title {
+        font-size: 2.4rem;
+    }
+
+    .hero-categories {
+        font-size: 1.1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+    }
+
+    /* Collections & Services Single Column */
+    .collections-grid,
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .card-image-wrapper {
+        padding-top: 100%; /* Square ratio on mobile */
+    }
+
+    .catalog-title {
+        font-size: 1.8rem;
+    }
+
+    /* Footer Layout */
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .footer-social {
+        grid-column: span 1;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   4. SMALL MOBILE STYLES (Max-Width: 480px)
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.75rem;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 0.85rem;
+    }
+
+    .floating-whatsapp {
+        width: 50px;
+        height: 50px;
+        font-size: 1.6rem;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .info-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   5. HAMBURGER ANIMATION & OVERLAY STATES
+   -------------------------------------------------------------------------- */
+.hamburger-menu.active .bar:nth-child(1) {
+    transform: translateY(8.5px) rotate(45deg);
+}
+
+.hamburger-menu.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .bar:nth-child(3) {
+    transform: translateY(-8.5px) rotate(-45deg);
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+body.menu-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+}
+
+
+/*section one ka */
+
+/* ==========================================================================
+   HERO SECTION RESPONSIVE FIX FOR MOBILE & TABLETS
+   ========================================================================== */
+
+/* Universal Overflow Protection */
+body, html {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.hero-container {
+    width: 100% !important;
+    max-width: 1200px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    box-sizing: border-box !important;
+}
+
+/* Mobile Screens (768px and below) */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 80px 0 40px 0 !important;
+        text-align: center !important;
+    }
+
+    /* Heading Text Size Fix */
+    .hero-title {
+        font-size: 2.2rem !important; /* Mobile par screen mein fit aayega */
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+
+    .eyebrow-glass-badge .eyebrow-text {
+        font-size: 0.7rem !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .hero-categories, 
+    .hero-subtitle {
+        font-size: 0.9rem !important;
+        word-wrap: break-word !important;
+    }
+
+    /* Buttons Mobile Fix */
+    .hero-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        align-items: center !important;
+    }
+
+    .hero-actions .btn {
+        width: 100% !important;
+        max-width: 280px !important;
+        padding: 12px 20px !important;
+        font-size: 0.85rem !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Slider Container Adjustment */
+    .hero-slider-wrapper {
+        height: 260px !important;
+        margin-top: 25px !important;
+    }
+}
+
+/* Small Mobile Screens (480px and below) */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.8rem !important; /* Extra small screens ke liye */
+    }
+}
