@@ -228,140 +228,168 @@
     </div>
 
     <script>
-        const API_URL = "http://localhost:5000/api/products";
-        let mainImageUrl = "";
-        let angleImageUrls = [];
-        let currentCategoryFilter = "all";
+    const API_URL = "http://localhost:5000/api/products";
+    let mainImageUrl = "";
+    let angleImageUrls = [];
+    let currentCategoryFilter = "all";
 
-        // 1. Preview Functions
-        function previewMainImg(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    mainImageUrl = e.target.result;
-                    document.getElementById("mainImgPreviewBox").innerHTML = 
-                        `<img src="${mainImageUrl}" class="preview-img">`;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function previewAngleImgs(event) {
-            const files = Array.from(event.target.files);
-            angleImageUrls = [];
-            const previewBox = document.getElementById("angleImgsPreviewBox");
-            previewBox.innerHTML = "";
-
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    angleImageUrls.push(e.target.result);
-                    previewBox.innerHTML += `<img src="${e.target.result}" class="preview-img">`;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        // 2. Fetch Products
-        async function fetchProducts() {
-            try {
-                const res = await fetch(`${API_URL}?category=${currentCategoryFilter}`);
-                const result = await res.json();
-                const tbody = document.getElementById("inventoryTableBody");
+    // --- Image Compression Helper Function ---
+    function compressAndConvert(file, callback) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const maxWidth = 800; // Image width ko max 800px kar dega
+                const scaleSize = maxWidth / img.width;
                 
-                if (!tbody) return;
-                tbody.innerHTML = "";
-
-                if (!result.data || result.data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No Products Found</td></tr>`;
-                    return;
+                if (scaleSize < 1) {
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scaleSize;
+                } else {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
                 }
 
-                result.data.forEach(prod => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><img src="${prod.mainImg}" alt="${prod.title}"></td>
-                            <td><strong>${prod.title}</strong></td>
-                            <td style="text-transform: capitalize;">${prod.category}</td>
-                            <td style="color:#e21b23; font-weight:700;">${prod.price}</td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="btn-action btn-delete" onclick="deleteProduct('${prod._id}')">
-                                        <i class="fa-solid fa-trash"></i> Delete
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } catch (err) {
-                console.error("Error fetching data:", err);
-            }
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Image quality ko 70% compress kar ke Base64 generate karega
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                callback(compressedBase64);
+            };
+        };
+    }
+
+    // 1. Preview Functions (With Compression)
+    function previewMainImg(event) {
+        const file = event.target.files[0];
+        if (file) {
+            compressAndConvert(file, (base64) => {
+                mainImageUrl = base64;
+                document.getElementById("mainImgPreviewBox").innerHTML = 
+                    `<img src="${mainImageUrl}" class="preview-img">`;
+            });
         }
+    }
 
-        // 3. Category Filter Tabs
-        function setCategoryFilter(cat, btn) {
-            currentCategoryFilter = cat;
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            fetchProducts();
-        }
+    function previewAngleImgs(event) {
+        const files = Array.from(event.target.files);
+        angleImageUrls = [];
+        const previewBox = document.getElementById("angleImgsPreviewBox");
+        previewBox.innerHTML = "";
 
-        // 4. Save Product
-        document.getElementById("productForm")?.addEventListener("submit", async function(e) {
-            e.preventDefault();
+        files.forEach(file => {
+            compressAndConvert(file, (base64) => {
+                angleImageUrls.push(base64);
+                previewBox.innerHTML += `<img src="${base64}" class="preview-img">`;
+            });
+        });
+    }
 
-            if (!mainImageUrl) {
-                alert("Please upload a main image first!");
+    // 2. Fetch Products
+    async function fetchProducts() {
+        try {
+            const res = await fetch(`${API_URL}?category=${currentCategoryFilter}`);
+            const result = await res.json();
+            const tbody = document.getElementById("inventoryTableBody");
+            
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            if (!result.data || result.data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No Products Found</td></tr>`;
                 return;
             }
 
-            const productData = {
-                category: document.getElementById("pCategory").value,
-                title: document.getElementById("pTitle").value,
-                price: document.getElementById("pPrice").value,
-                mainImg: mainImageUrl,
-                angles: angleImageUrls.length > 0 ? angleImageUrls : [mainImageUrl],
-                desc: document.getElementById("pDesc").value
-            };
+            result.data.forEach(prod => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${prod.mainImg}" alt="${prod.title}"></td>
+                        <td><strong>${prod.title}</strong></td>
+                        <td style="text-transform: capitalize;">${prod.category}</td>
+                        <td style="color:#e21b23; font-weight:700;">${prod.price}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-action btn-delete" onclick="deleteProduct('${prod._id}')">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (err) {
+            console.error("Error fetching data:", err);
+        }
+    }
 
-            try {
-                const res = await fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(productData)
-                });
+    // 3. Category Filter Tabs
+    function setCategoryFilter(cat, btn) {
+        currentCategoryFilter = cat;
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        fetchProducts();
+    }
 
-                const responseData = await res.json();
-                if (responseData.success) {
-                    alert("Product saved to MongoDB Database!");
-                    this.reset();
-                    mainImageUrl = "";
-                    angleImageUrls = [];
-                    document.getElementById("mainImgPreviewBox").innerHTML = "";
-                    document.getElementById("angleImgsPreviewBox").innerHTML = "";
-                    fetchProducts();
-                }
-            } catch (err) {
-                console.error("Error saving product:", err);
-                alert("Failed to save product!");
-            }
-        });
+    // 4. Save Product
+    document.getElementById("productForm")?.addEventListener("submit", async function(e) {
+        e.preventDefault();
 
-        // 5. Delete Product
-        async function deleteProduct(id) {
-            if (confirm("Are you sure you want to delete this product?")) {
-                try {
-                    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-                    fetchProducts();
-                } catch (err) {
-                    console.error("Error deleting product:", err);
-                }
-            }
+        if (!mainImageUrl) {
+            alert("Please upload a main image first!");
+            return;
         }
 
-        document.addEventListener("DOMContentLoaded", fetchProducts);
-    </script>
+        const productData = {
+            category: document.getElementById("pCategory").value,
+            title: document.getElementById("pTitle").value,
+            price: document.getElementById("pPrice").value,
+            mainImg: mainImageUrl,
+            angles: angleImageUrls.length > 0 ? angleImageUrls : [mainImageUrl],
+            desc: document.getElementById("pDesc").value
+        };
+
+        try {
+            const res = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(productData)
+            });
+
+            const responseData = await res.json();
+            if (responseData.success) {
+                alert("Product saved to MongoDB Database!");
+                this.reset();
+                mainImageUrl = "";
+                angleImageUrls = [];
+                document.getElementById("mainImgPreviewBox").innerHTML = "";
+                document.getElementById("angleImgsPreviewBox").innerHTML = "";
+                fetchProducts();
+            } else {
+                alert("Server error: " + (responseData.message || "Failed to save product"));
+            }
+        } catch (err) {
+            console.error("Error saving product:", err);
+            alert("Failed to save product!");
+        }
+    });
+
+    // 5. Delete Product
+    async function deleteProduct(id) {
+        if (confirm("Are you sure you want to delete this product?")) {
+            try {
+                await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                fetchProducts();
+            } catch (err) {
+                console.error("Error deleting product:", err);
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchProducts);
+</script>
 </body>
 </html>
