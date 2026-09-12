@@ -58,41 +58,37 @@
 
 
     <!-- Aapki file ke aakhir mein yeh code laga dein -->
-    <script>
-        // Function to load products dynamically from Admin storage
-        function loadProductsForCurrentPage() {
-            const productsContainer = document.getElementById("productsContainer");
-            if (!productsContainer) return; // Agar page par container na ho toh skip karein
+   <script>
+    const API_URL = "https://maha-enterprises-production.up.railway.app/api/products";
 
-            // LocalStorage se data laayein
-            const storedProducts = localStorage.getItem("maha_products");
-            const products = storedProducts ? JSON.parse(storedProducts) : [];
+    async function loadProductsForCurrentPage() {
+        const productsContainer = document.getElementById("productsContainer");
+        if (!productsContainer) return;
 
-            // Check karein ki abhi konsa page khula hai (e.g., clothes.html)
-            const currentPage = window.location.pathname.split("/").pop().replace(".html", "");
+        try {
+            const res = await fetch(API_URL);
+            if (!res.ok) throw new Error("Fetch failed");
 
-            // Filter products based on current page category
-            const filteredProducts = products.filter(p => {
-                if (currentPage === "clothes") return p.category === "clothes";
-                if (currentPage === "shoes") return p.category === "shoes";
-                if (currentPage === "watch") return p.category === "watches";
-                if (currentPage === "perfium") return p.category === "perfumes";
-                return true; // index.html par sab dikhayega
-            });
+            const result = await res.json();
+            const products = Array.isArray(result) ? result : (result.data || []);
+
+            // Filtering Watches
+            const filteredProducts = products.filter(p => p.category === "watches");
 
             if (filteredProducts.length === 0) {
-                productsContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #777;">No products available in this category yet.</p>`;
+                productsContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #777;">No watches available yet.</p>`;
                 return;
             }
 
-            // Grid ko clear karke naye products render karein
             productsContainer.innerHTML = "";
             filteredProducts.forEach(product => {
-                // Aapke clothes.html page ka design structure
+                const img = product.mainImg || product.image || "";
+                const id = product._id || product.id;
+
                 const productHTML = `
-                    <a href="product-detail.html?id=${product.id}" class="product-card">
+                    <a href="product-detail.html?id=${id}" class="product-card">
                         <div class="product-image-box">
-                            <img src="${product.mainImg}" alt="${product.title}">
+                            <img src="${img}" alt="${product.title}">
                         </div>
                         <div class="product-info">
                             <h3 class="product-title">${product.title}</h3>
@@ -103,15 +99,13 @@
                 `;
                 productsContainer.innerHTML += productHTML;
             });
+        } catch (err) {
+            console.error("Watch fetch error:", err);
+            productsContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Error loading watches from server.</p>`;
         }
+    }
 
-        // Redirect to product-detail.html with ID
-        function viewProduct(id) {
-            window.location.href = `product-detail.html?id=${id}`;
-        }
-
-        // Page load hote hi run karein
-        document.addEventListener("DOMContentLoaded", loadProductsForCurrentPage);
-    </script>
+    document.addEventListener("DOMContentLoaded", loadProductsForCurrentPage);
+</script>
 </body>
 </html>
