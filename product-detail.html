@@ -240,27 +240,22 @@
         <div class="gallery-wrapper">
             <div class="main-image-container">
                 <button class="slider-arrow prev-btn" id="prevBtn"><i class="fa-solid fa-chevron-left"></i></button>
-                <img src="images/collections/clothes.jpg" id="mainDisplayImg" alt="Product Image">
+                <img src="" id="mainDisplayImg" alt="Product Image">
                 <button class="slider-arrow next-btn" id="nextBtn"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
 
             <!-- Angle Thumbnails -->
-            <div class="thumbnail-container" id="thumbBox">
-                <img src="images/collections/clothes.jpg" class="thumb-img active" onclick="changeImage(0)">
-                <img src="images/collections/watches.jpg" class="thumb-img" onclick="changeImage(1)">
-                <img src="images/collections/shoes.jpg" class="thumb-img" onclick="changeImage(2)">
-                <img src="images/collections/perfumes.jpg" class="thumb-img" onclick="changeImage(3)">
-            </div>
+            <div class="thumbnail-container" id="thumbBox"></div>
         </div>
 
         <!-- Right: Info & WhatsApp Action -->
         <div class="product-details-info">
-            <span class="category-badge" id="pCategory">Clothes</span>
-            <h1 class="product-title" id="pTitle">Luxury Premium Suit</h1>
-            <p class="product-price" id="pPrice">PKR 4,500</p>
+            <span class="category-badge" id="pCategory">Loading...</span>
+            <h1 class="product-title" id="pTitle">Loading Product...</h1>
+            <p class="product-price" id="pPrice">PKR --</p>
             
             <p class="product-description" id="pDesc">
-                Experience high-end design with top-tier materials. Crafted for elegance, durability, and style. Available in multiple color options and sizes.
+                Please wait while we fetch product details...
             </p>
 
             <a href="#" id="waOrderBtn" target="_blank" class="whatsapp-order-btn">
@@ -270,9 +265,9 @@
 
     </div>
 
-    <!-- Gallery & WhatsApp Logic Script -->
-    <!-- Gallery & Admin Dynamic Data + WhatsApp Logic Script -->
+    <!-- Gallery & Railway Backend API Logic Script -->
     <script>
+        const API_BASE_URL = "https://maha-enterprises-production.up.railway.app/api/products";
         let productImages = [];
         let currentIndex = 0;
 
@@ -324,51 +319,75 @@
             changeImage(currentIndex);
         });
 
-        // Step 3: Load Data From LocalStorage/Admin Panel
-        document.addEventListener("DOMContentLoaded", function() {
+        // Load Data From Railway Backend Database
+        document.addEventListener("DOMContentLoaded", async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
 
-            if (!productId) return;
+            if (!productId) {
+                document.getElementById("pTitle").innerText = "Product Not Found";
+                return;
+            }
 
-            const storedProducts = localStorage.getItem("maha_products");
-            const products = storedProducts ? JSON.parse(storedProducts) : [];
+            try {
+                // Fetch product directly from backend or all products
+                const res = await fetch(`${API_BASE_URL}/${productId}`);
+                let product;
 
-            // Find matching product
-            const product = products.find(p => String(p.id) === String(productId));
-
-            if (product) {
-                // Populate Text Details
-                if (document.getElementById("pTitle")) document.getElementById("pTitle").innerText = product.title;
-                if (document.getElementById("pPrice")) document.getElementById("pPrice").innerText = product.price.includes("PKR") ? product.price : `PKR ${product.price}`;
-                if (document.getElementById("pDesc")) document.getElementById("pDesc").innerText = product.desc || product.description || "High-quality premium product.";
-                if (document.getElementById("pCategory")) document.getElementById("pCategory").innerText = product.category || "Collection";
-
-                // Setup Images Array
-                productImages = [];
-                if (product.mainImg) productImages.push(product.mainImg);
-                if (product.angles && Array.isArray(product.angles)) {
-                    productImages.push(...product.angles);
-                } else if (product.images && Array.isArray(product.images)) {
-                    productImages.push(...product.images);
+                if (res.ok) {
+                    const data = await res.json();
+                    product = data.data || data;
+                } else {
+                    // Fallback: fetch all and find
+                    const allRes = await fetch(API_BASE_URL);
+                    const allData = await allRes.json();
+                    const list = Array.isArray(allData) ? allData : (allData.data || []);
+                    product = list.find(p => (p._id === productId || p.id === productId));
                 }
 
-                // Fallback if no images found
-                if (productImages.length === 0) {
-                    productImages.push(mainImg.src);
-                }
+                if (product) {
+                    // Populate Text Details
+                    if (document.getElementById("pTitle")) document.getElementById("pTitle").innerText = product.title || "No Title";
+                    
+                    const formattedPrice = product.price ? (String(product.price).includes("PKR") ? product.price : `PKR ${product.price}`) : "PKR --";
+                    if (document.getElementById("pPrice")) document.getElementById("pPrice").innerText = formattedPrice;
+                    
+                    if (document.getElementById("pDesc")) document.getElementById("pDesc").innerText = product.desc || product.description || "High-quality premium product.";
+                    if (document.getElementById("pCategory")) document.getElementById("pCategory").innerText = product.category || "Collection";
 
-                // Set Main Image
-                mainImg.src = productImages[0];
+                    // Setup Images Array (Main image + angle images)
+                    productImages = [];
+                    if (product.mainImg) productImages.push(product.mainImg);
+                    if (product.image && !product.mainImg) productImages.push(product.image);
+                    
+                    if (product.angles && Array.isArray(product.angles)) {
+                        productImages.push(...product.angles);
+                    } else if (product.images && Array.isArray(product.images)) {
+                        productImages.push(...product.images);
+                    }
 
-                // Render Thumbnail Images Dynamically
-                const thumbBox = document.getElementById("thumbBox");
-                if (thumbBox) {
-                    thumbBox.innerHTML = "";
-                    productImages.forEach((imgSrc, idx) => {
-                        thumbBox.innerHTML += `<img src="${imgSrc}" class="thumb-img ${idx === 0 ? 'active' : ''}" onclick="changeImage(${idx})">`;
-                    });
+                    // Fallback
+                    if (productImages.length === 0) {
+                        productImages.push("https://via.placeholder.com/400");
+                    }
+
+                    // Set Main Image
+                    mainImg.src = productImages[0];
+
+                    // Render Thumbnail Images Dynamically
+                    const thumbBox = document.getElementById("thumbBox");
+                    if (thumbBox) {
+                        thumbBox.innerHTML = "";
+                        productImages.forEach((imgSrc, idx) => {
+                            thumbBox.innerHTML += `<img src="${imgSrc}" class="thumb-img ${idx === 0 ? 'active' : ''}" onclick="changeImage(${idx})">`;
+                        });
+                    }
+                } else {
+                    document.getElementById("pTitle").innerText = "Product Not Found";
                 }
+            } catch (err) {
+                console.error("Error fetching product details:", err);
+                document.getElementById("pTitle").innerText = "Error Loading Product";
             }
 
             updateWhatsAppLink();
