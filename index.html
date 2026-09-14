@@ -23,86 +23,75 @@
 </head>
 <body>
 
-    <!-- Liquid Background Canvas Container -->
-    <canvas id="liquid-canvas"></canvas>
-
     <!-- Header / Navbar -->
     <header class="navbar-header" id="navbar">
         <nav class="navbar container">
-            <a href="#home" class="navbar-logo">
-                <img src="images/logo/logo.png" alt="MAHA ENTERPRISES Logo" class="logo-img logo-dark">
-                <img src="images/logo/logo-white.png" alt="MAHA ENTERPRISES White Logo" class="logo-img logo-light">
+            <a href="index.html" class="brand-logo">
+                <span class="red">MAHA</span> ENTERPRISES
             </a>
 
-            <ul class="nav-links" id="nav-links">
-                <li><a href="#home" class="nav-link active">Home</a></li>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active">Home</a></li>
                 <li><a href="#collections" class="nav-link">Products</a></li>
-                <li><a href="#services" class="nav-link">Services</a></li>
                 <li><a href="#about" class="nav-link">About Us</a></li>
                 <li><a href="#location" class="nav-link">Contact</a></li>
             </ul>
 
-            <div class="nav-actions">
-                <a href="https://wa.me/9231339223086?text=Hi%20MAHA%20Enterprises,%20I%20want%20to%20inquire%20about%20your%20products." target="_blank" rel="noopener" class="btn btn-outline">
-    <i class="fa-brands fa-whatsapp"></i> CHAT ON WHATSAPP
-</a>
-                </a>
-                <button class="hamburger-menu" id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </button>
-            </div>
+            <a href="https://wa.me/9231339223086?text=Hi%20MAHA%20Enterprises,%20I%20want%20to%20inquire%20about%20your%20products." target="_blank" class="btn-wa">
+                <i class="fa-brands fa-whatsapp"></i> CHAT ON WHATSAPP
+            </a>
         </nav>
     </header>
 
     <main id="main-content">
 
-       <!-<!-- Hero Section -->
-        <section class="hero-section" id="home">
-            <div class="container hero-container">
-                <div class="hero-content">
+        <!-- DYNAMIC BANNER & HERO SECTION -->
+        <section class="banner-section" id="home">
+            <div class="container banner-wrapper">
+                
+                <!-- LEFT SIDE: Dynamic Auto-Sliding Post Banner -->
+                <div class="banner-post-container">
+                    <button class="banner-nav-btn banner-prev" id="bannerPrevBtn">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
                     
-                    <!-- Clean Pill Badge -->
-                    <div class="eyebrow-badge hero-anim-1">
+                    <div class="banner-slider" id="bannerSlider">
+                        <!-- Default Placeholder Slide -->
+                        <div class="banner-slide active">
+                            <div class="banner-img-box">
+                                <img src="images/collections/clothes.jpg" alt="Special Offer">
+                            </div>
+                            <div class="banner-action-bar">
+                                <a href="#collections" class="banner-visit-btn">
+                                    SHOP NOW <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="banner-nav-btn banner-next" id="bannerNextBtn">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- CENTER: Red Neon Divider Line -->
+                <div class="neon-divider"></div>
+
+                <!-- RIGHT SIDE: Brand Info Text -->
+                <div class="banner-text-content">
+                    <div class="eyebrow-badge">
                         <span class="eyebrow-text">PREMIUM QUALITY PRODUCTS</span>
                     </div>
-                    
-                    <!-- VIP Animated Typography -->
-                    <h1 class="hero-title hero-anim-2">
+
+                    <h1 class="hero-title">
                         <span class="text-brand-red">MAHA</span>
                         <span class="text-brand-dark">ENTERPRISES</span>
                     </h1>
-                    
-                    <p class="hero-categories hero-anim-3">Clothes • Watches • Shoes • Perfumes</p>
-                    <p class="hero-subtitle hero-anim-4">Quality Products | Custom Printing | Bulk Orders</p>
-                    
-                    <div class="hero-actions hero-anim-5">
-                        <a href="#collections" class="btn btn-primary">EXPLORE PRODUCTS</a>
-                        <a href="https://wa.me/9231339223086?text=Hi%20MAHA%20Enterprises,%20I%20want%20to%20inquire%20about%20your%20products." target="_blank" rel="noopener" class="btn btn-outline">
-    <i class="fa-brands fa-whatsapp"></i> CHAT ON WHATSAPP
-</a>
-                        </a>
-                    </div>
+
+                    <p class="hero-categories">Clothes • Watches • Shoes • Perfumes</p>
+                    <p class="hero-subtitle">Quality Products | Custom Printing | Bulk Orders</p>
                 </div>
 
-                <!-- Right Media Auto Slider (Card Removed) -->
-                <div class="hero-media hero-anim-6">
-                    <div class="hero-slider-wrapper">
-                        <div class="hero-slide active">
-                            <img src="images/collections/clothes.jpg" alt="Clothes Collection" class="hero-slider-img">
-                        </div>
-                        <div class="hero-slide">
-                            <img src="images/collections/shoes.jpg" alt="Shoes Collection" class="hero-slider-img">
-                        </div>
-                        <div class="hero-slide">
-                            <img src="images/collections/perfumes.jpg" alt="Perfumes Collection" class="hero-slider-img">
-                        </div>
-                        <div class="hero-slide">
-                            <img src="images/collections/watches.jpg" alt="Watches Collection" class="hero-slider-img">
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
