@@ -119,23 +119,92 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-/* section one waps*/
+//ya section one ka new ha bhai
+        const BANNER_API_URL = "https://maha-enterprises-production.up.railway.app/api/banners";
+        let bannerList = [];
+        let currentBannerIndex = 0;
+        let bannerTimer = null;
 
-/* ==========================================================================
-   HERO PRODUCT AUTO SLIDER (2-Second Interval)
-   ========================================================================== */
-document.addEventListener('DOMContentLoaded', () => {
-    const slides = document.querySelectorAll('.hero-slide');
-    if (!slides.length) return;
+        const bannerSlider = document.getElementById("bannerSlider");
 
-    let currentSlide = 0;
+        // Load Banners from Railway Backend
+        async function fetchBanners() {
+            try {
+                const res = await fetch(BANNER_API_URL);
+                if (!res.ok) throw new Error("Banner fetch failed");
+                
+                const data = await res.json();
+                bannerList = Array.isArray(data) ? data : (data.data || []);
 
-    function nextSlide() {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % slides.length;
-        slides[currentSlide].classList.add('active');
-    }
+                if (bannerList.length > 0) {
+                    renderBanners();
+                    startAutoSlide();
+                }
+            } catch (err) {
+                console.log("Using default fallback banner:", err);
+            }
+        }
 
-    // Har 2 Seconds (2000ms) ke baad image change hogi
-    setInterval(nextSlide, 2000);
-});
+        // Render Banner Slides Dynamically
+        function renderBanners() {
+            if (!bannerSlider || bannerList.length === 0) return;
+
+            bannerSlider.innerHTML = "";
+            bannerList.forEach((banner, index) => {
+                const isActive = index === 0 ? "active" : "";
+                const targetUrl = banner.linkUrl || "#collections";
+
+                const slideHTML = `
+                    <div class="banner-slide ${isActive}">
+                        <div class="banner-img-box">
+                            <img src="${banner.imageUrl}" alt="Banner Post ${index + 1}">
+                        </div>
+                        <div class="banner-action-bar">
+                            <a href="${targetUrl}" target="_blank" class="banner-visit-btn">
+                                VIEW POST DETAILS <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                bannerSlider.innerHTML += slideHTML;
+            });
+        }
+
+        // Change Active Slide
+        function showSlide(index) {
+            const slides = document.querySelectorAll(".banner-slide");
+            if (slides.length === 0) return;
+
+            if (index >= slides.length) currentBannerIndex = 0;
+            else if (index < 0) currentBannerIndex = slides.length - 1;
+            else currentBannerIndex = index;
+
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle("active", idx === currentBannerIndex);
+            });
+        }
+
+        // Auto slide every 5 seconds
+        function startAutoSlide() {
+            stopAutoSlide();
+            bannerTimer = setInterval(() => {
+                showSlide(currentBannerIndex + 1);
+            }, 5000);
+        }
+
+        function stopAutoSlide() {
+            if (bannerTimer) clearInterval(bannerTimer);
+        }
+
+        // Manual Next/Prev Listeners
+        document.getElementById("bannerNextBtn")?.addEventListener("click", () => {
+            showSlide(currentBannerIndex + 1);
+            startAutoSlide();
+        });
+
+        document.getElementById("bannerPrevBtn")?.addEventListener("click", () => {
+            showSlide(currentBannerIndex - 1);
+            startAutoSlide();
+        });
+
+        document.addEventListener("DOMContentLoaded", fetchBanners);
