@@ -489,8 +489,8 @@ h1, h2, h3, h4, .hero-title, .section-title {
 }
 
 .banner-img-box {
-    width: 90%;
-    height: 90%;
+    width: 150%;
+    height: 150%;
     overflow: hidden;
 }
 
