@@ -421,125 +421,124 @@ h1, h2, h3, h4, .hero-title, .section-title {
         }
 
         /* ==========================================================================
-           DYNAMIC AUTO-SLIDING BANNER SECTION
-           ========================================================================== */
-        .banner-section {
-            background: radial-gradient(circle at 80% 20%, rgba(226, 27, 35, 0.05) 0%, transparent 40%),
-                        linear-gradient(135deg, #ffffff 0%, #f1f3f5 100%);
-            padding: 60px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-            position: relative;
-        }
-
-        .banner-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 30px;
-            position: relative;
-        }
-
-        /* Left side: Post Display Container */
-        .banner-post-container {
-            flex: 1;
-            width: 100%;
-            max-width: 580px;
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            background: #fff;
-        }
-
-        .banner-slider {
-            position: relative;
-            width: 100%;
-            height: 380px;
-        }
-
-        .banner-slide {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            transform: scale(0.97);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .banner-slide.active {
-            opacity: 1;
-            transform: scale(1);
-            z-index: 2;
-        }
-
-        /* Banner Container ko Fixed Square Aspect Ratio dein */
-.banner-post-container {
-    width: 100%;
-    max-width: 450px; /* Ya jitni width aap rakhna chahen */
-    aspect-ratio: 1 / 1; /* 800x800 image ke liye perfect square box */
+   DYNAMIC AUTO-SLIDING BANNER SECTION
+   ========================================================================== */
+.banner-section {
+    background: radial-gradient(circle at 80% 20%, rgba(226, 27, 35, 0.05) 0%, transparent 40%),
+                linear-gradient(135deg, #ffffff 0%, #f1f3f5 100%);
+    padding: 60px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
     position: relative;
-    border-radius: 16px;
-    overflow: hidden;
 }
 
-.banner-slider, .banner-slide {
+.banner-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    position: relative;
+}
+
+/* Container setup */
+.banner-post-container {
+    flex: 1;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.banner-slider {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Pure 800x800 square frame */
+}
+
+.banner-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+    transform: scale(0.97);
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
+}
+
+.banner-slide.active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2;
 }
 
 .banner-img-box {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    background: #fff;
 }
 
-/* Image Ko Stretch Hue Bina Perfect Fit Karne Ke Liye */
+/* 100% Full Image without Cropping/Cutting */
 .banner-img-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Image pichke gi nahi aur box mein clean set hogi */
+    object-fit: contain; /* Complete image show hogi, kahin se bhi nahi kategi */
     object-position: center;
     display: block;
 }
 
+/* Button positioned cleanly BELOW the image */
+.banner-action-bar {
+    position: relative;
+    width: 100%;
+    padding: 12px;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    z-index: 3;
+}
 
-/* chotia */
-       /* Button Overlay on Bottom of Post */
-        .banner-action-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 15px;
-            background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+.banner-visit-btn {
+    background: #e21b23;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(226, 27, 35, 0.4);
+    transition: all 0.3s ease;
+}
 
+.banner-visit-btn:hover {
+    background: #ff2a33;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(226, 27, 35, 0.6);
+}
 
-        .banner-visit-btn {
-            background: #e21b23;
-            color: #fff;
-            padding: 10px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(226, 27, 35, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .banner-visit-btn:hover {
-            background: #ff2a33;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(226, 27, 35, 0.6);
-        }
+/* Mobile View Adjustments */
+@media (max-width: 768px) {
+    .banner-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .banner-post-container {
+        max-width: 100%;
+    }
+}
 
 
 
