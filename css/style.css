@@ -1550,6 +1550,19 @@ h1, h2, h3, h4, .hero-title, .section-title {
     }
 }
 
+/* ya code button ko necha krna ka lia ha chotia*/
+
+/* Shift "VIEW POST DETAILS" button below the image container */
+.banner-post-container {
+    padding-bottom: 50px !important; /* Button ko niche shift karne ke liye extra space */
+    position: relative;
+}
+
+.banner-post-container .btn-view-details,
+.banner-post-container a[class*="btn"] { 
+    bottom: 10px !important; /* Button ko poster ke overlay se bahar niche le aayega */
+    transform: translateX(-50%) translateY(50%) !important;
+}
 
 
 
