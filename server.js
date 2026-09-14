@@ -16,7 +16,9 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB Atlas Connected!'))
     .catch(err => console.error('DB Error:', err));
 
-// Mongoose Schema
+// ================= MONGOOSE SCHEMAS =================
+
+// 1. Product Schema
 const productSchema = new mongoose.Schema({
     category: String,
     title: String,
@@ -28,9 +30,17 @@ const productSchema = new mongoose.Schema({
 
 const Product = mongoose.model('Product', productSchema);
 
-// ================= API ENDPOINTS =================
+// 2. Banner Schema (NEW ADDITION)
+const bannerSchema = new mongoose.Schema({
+    imageUrl: String,
+    linkUrl: String
+}, { timestamps: true });
 
-// 1. Get All Products
+const Banner = mongoose.model('Banner', bannerSchema);
+
+// ================= PRODUCT API ENDPOINTS =================
+
+// Get All Products
 app.get('/api/products', async (req, res) => {
     try {
         const { category } = req.query;
@@ -45,7 +55,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// 2. Add New Product
+// Add New Product
 app.post('/api/products', async (req, res) => {
     try {
         const newProd = new Product(req.body);
@@ -56,7 +66,7 @@ app.post('/api/products', async (req, res) => {
     }
 });
 
-// 3. Update Product
+// Update Product
 app.put('/api/products/:id', async (req, res) => {
     try {
         await Product.findByIdAndUpdate(req.params.id, req.body);
@@ -66,7 +76,7 @@ app.put('/api/products/:id', async (req, res) => {
     }
 });
 
-// 4. Delete Product
+// Delete Product
 app.delete('/api/products/:id', async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -76,5 +86,42 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 });
 
+// ================= BANNER API ENDPOINTS (NEW ADDITION) =================
+
+// 1. Get All Banners
+app.get('/api/banners', async (req, res) => {
+    try {
+        const banners = await Banner.find().sort({ createdAt: -1 });
+        res.json({ success: true, data: banners });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// 2. Add New Banner
+app.post('/api/banners', async (req, res) => {
+    try {
+        const newBanner = new Banner({
+            imageUrl: req.body.imageUrl || req.body.image || req.body.bannerImg,
+            linkUrl: req.body.linkUrl || req.body.link || "#collections"
+        });
+        await newBanner.save();
+        res.json({ success: true, message: "Banner Uploaded!" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// 3. Delete Banner
+app.delete('/api/banners/:id', async (req, res) => {
+    try {
+        await Banner.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: "Banner Deleted!" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// ================= SERVER START =================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
