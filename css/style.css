@@ -420,7 +420,7 @@ h1, h2, h3, h4, .hero-title, .section-title {
             background: #1eb956;
         }
 
-      /* ==========================================================================
+     /* ==========================================================================
    DYNAMIC AUTO-SLIDING BANNER SECTION
    ========================================================================== */
 .banner-section {
@@ -439,7 +439,7 @@ h1, h2, h3, h4, .hero-title, .section-title {
     position: relative;
 }
 
-/* Card Main Container */
+/* Container setup */
 .banner-post-container {
     flex: 1;
     width: 100%;
@@ -454,57 +454,68 @@ h1, h2, h3, h4, .hero-title, .section-title {
 .banner-slider {
     position: relative;
     width: 100%;
+    aspect-ratio: 1 / 1; /* Pure 1080x1080 Square Frame */
+    overflow: hidden;
 }
 
-/* Base Slide Setup */
 .banner-slide {
-    display: none; /* Hide inactive slides completely */
-    width: 100%;
-    flex-direction: column;
+    position: absolute;
+    inset: 0;
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    visibility: hidden;
+    pointer-events: none; /* Inactive slides will not block clicks */
+    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+    transform: scale(0.97);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
 }
 
-/* Active Slide - Fully Visible & Clickable */
 .banner-slide.active {
-    display: flex;
     opacity: 1;
-    position: relative;
-    z-index: 2;
+    visibility: visible;
+    pointer-events: auto; /* Active slide receives clicks */
+    transform: scale(1);
+    z-index: 5;
 }
 
-/* 1080x1080 (1:1 Aspect Ratio) Image Container */
+/* 1080x1080 Image Full Card Fit */
 .banner-img-box {
     width: 100%;
-    aspect-ratio: 1 / 1; 
+    height: 100%;
     overflow: hidden;
     background: #fff;
+    position: relative;
 }
 
 .banner-img-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Fits full 1080x1080 cleanly without white borders */
+    object-fit: cover; /* Complete card fill karega bina image crop hue */
     object-position: center;
     display: block;
 }
 
-/* Button Section Cleanly Below Image */
+/* Button Container POSITIONED OVER THE IMAGE (Bottom Floating) */
 .banner-action-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
     width: 100%;
-    padding: 16px 12px;
-    background: #ffffff;
+    padding: 0 15px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    position: relative;
-    z-index: 10; /* Ensures button stays on top and fully clickable */
+    z-index: 10; /* Ensures it stays on top of the image */
+    pointer-events: none; /* Background transparent area passes clicks */
 }
 
 .banner-visit-btn {
+    position: relative;
+    pointer-events: auto; /* Ensures button receives clicks directly */
+    z-index: 11;
     background: #e21b23;
-    color: #ffffff;
+    color: #fff;
     padding: 12px 28px;
     border-radius: 25px;
     text-decoration: none;
@@ -514,45 +525,17 @@ h1, h2, h3, h4, .hero-title, .section-title {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 15px rgba(226, 27, 35, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-    cursor: pointer;
     text-transform: uppercase;
+    cursor: pointer;
 }
 
 .banner-visit-btn:hover {
     background: #ff2a33;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(226, 27, 35, 0.6);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(226, 27, 35, 0.6);
 }
-
-/* Prev/Next Navigation Buttons Positioning */
-.banner-nav-btn {
-    position: absolute;
-    top: 40%; /* Positioned over image area only, away from bottom button */
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    cursor: pointer;
-    z-index: 15;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
-    transition: all 0.3s ease;
-}
-
-.banner-nav-btn:hover {
-    background: #e21b23;
-    color: #fff;
-}
-
-.banner-prev { left: 15px; }
-.banner-next { right: 15px; }
 
 /* Mobile View Adjustments */
 @media (max-width: 768px) {
@@ -563,6 +546,15 @@ h1, h2, h3, h4, .hero-title, .section-title {
     
     .banner-post-container {
         max-width: 100%;
+    }
+
+    .banner-action-bar {
+        bottom: 15px;
+    }
+
+    .banner-visit-btn {
+        padding: 10px 20px;
+        font-size: 0.78rem;
     }
 }
 
