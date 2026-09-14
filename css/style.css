@@ -473,18 +473,35 @@ h1, h2, h3, h4, .hero-title, .section-title {
             z-index: 2;
         }
 
-        .banner-img-box {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
+        /* Banner Container ko Fixed Square Aspect Ratio dein */
+.banner-post-container {
+    width: 100%;
+    max-width: 450px; /* Ya jitni width aap rakhna chahen */
+    aspect-ratio: 1 / 1; /* 800x800 image ke liye perfect square box */
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+}
 
-        .banner-img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.banner-slider, .banner-slide {
+    width: 100%;
+    height: 100%;
+}
+
+.banner-img-box {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Image Ko Stretch Hue Bina Perfect Fit Karne Ke Liye */
+.banner-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Image pichke gi nahi aur box mein clean set hogi */
+    object-position: center;
+    display: block;
+}
 
         /* Button Overlay on Bottom of Post */
         .banner-action-bar {
