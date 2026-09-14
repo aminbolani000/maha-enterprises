@@ -209,18 +209,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.addEventListener("DOMContentLoaded", fetchBanners);
-
+// ya sa nav ka naya ha ok 
 document.addEventListener("DOMContentLoaded", () => {
     const mobileMenuBtn = document.getElementById("mobileMenuBtn");
     const navMenu = document.getElementById("navMenu");
 
     if (mobileMenuBtn && navMenu) {
+        // Toggle menu when clicking 3-dots icon
         mobileMenuBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             navMenu.classList.toggle("active");
         });
 
-        // Close dropdown when clicking outside
+        // Close menu when clicking any link inside it
+        navMenu.querySelectorAll(".nav-link").forEach(link => {
+            link.addEventListener("click", () => {
+                navMenu.classList.remove("active");
+            });
+        });
+
+        // Close menu when clicking anywhere outside
         document.addEventListener("click", (e) => {
             if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
                 navMenu.classList.remove("active");
