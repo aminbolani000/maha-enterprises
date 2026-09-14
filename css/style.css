@@ -489,8 +489,8 @@ h1, h2, h3, h4, .hero-title, .section-title {
 }
 
 .banner-img-box {
-    width: 150%;
-    height: 150%;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -505,38 +505,42 @@ h1, h2, h3, h4, .hero-title, .section-title {
 
 
 /* chotia */
-      /* Button Overlay Fix - Moves button safely below image */
-.banner-action-bar {
-    position: relative;
-    width: 100%;
-    padding: 12px 0 5px 0;
-    background: transparent; /* Black gradient overlay hata diya */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+       /* Button Overlay on Bottom of Post */
+        .banner-action-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.banner-visit-btn {
-    background: #e21b23;
-    color: #fff;
-    padding: 8px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(226, 27, 35, 0.35);
-    transition: all 0.3s ease;
-}
 
-.banner-visit-btn:hover {
-    background: #ff2a33;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(226, 27, 35, 0.5);
-}
+        .banner-visit-btn {
+            background: #e21b23;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(226, 27, 35, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .banner-visit-btn:hover {
+            background: #ff2a33;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(226, 27, 35, 0.6);
+        }
+
 
 
         /* Navigation Controls for Slider */
