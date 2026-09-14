@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Admin Dashboard | MAHA Enterprises</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -111,6 +114,71 @@
         .btn-delete:hover { background: #e21b23; color: #fff; }
 
         @media (max-width: 900px) { .admin-container { grid-template-columns: 1fr; } }
+
+
+        /*ya style ka responsive ha chotia  */
+        /* ==========================================================================
+   ADMIN PANEL MOBILE RESPONSIVE STYLES
+   ========================================================================== */
+
+/* Universal Overflow Control */
+body, html {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Container Adjustments */
+.admin-container {
+    width: 100% !important;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* Header Responsiveness */
+.admin-header {
+    width: 100%;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Media Query for Mobile Screens */
+@media (max-width: 768px) {
+    /* Grid ko Single Column me Switch karein */
+    .admin-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px;
+        padding: 10px;
+    }
+
+    /* Form and Card Widths Fit to Screen */
+    .admin-container > div,
+    .admin-card,
+    form {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Input Fields and Buttons Responsive */
+    input[type="text"],
+    input[type="url"],
+    input[type="file"],
+    button,
+    .btn {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Typography scale for small screens */
+    .admin-header h1, 
+    .admin-header h2 {
+        font-size: 1.4rem !important;
+    }
+}
     </style>
 </head>
 <body>
