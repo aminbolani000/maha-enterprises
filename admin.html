@@ -31,6 +31,7 @@
         .admin-card {
             background: #fff; border-radius: 12px; padding: 22px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 25px;
         }
         .admin-card h2 {
             font-size: 1.25rem; font-weight: 700; margin-bottom: 18px; color: #111;
@@ -90,7 +91,7 @@
             background: #111; color: #fff; border-color: #111;
         }
 
-        .table-responsive { overflow-x: auto; max-height: 600px; }
+        .table-responsive { overflow-x: auto; max-height: 450px; }
         .product-table {
             width: 100%; border-collapse: collapse; background: #fff;
             border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
@@ -121,107 +122,157 @@
 
     <div class="admin-container">
         
-        <!-- Form Section -->
-        <div class="admin-card">
-            <h2 id="formHeading">Add New Product</h2>
-            <form id="productForm">
-                <div class="form-group">
-                    <label>Category</label>
-                    <select class="form-control" id="pCategory" required>
-                        <option value="clothes">Clothes</option>
-                        <option value="shoes">Shoes</option>
-                        <option value="watches">Watches</option>
-                        <option value="perfumes">Perfumes</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Product Title</label>
-                    <input type="text" class="form-control" id="pTitle" placeholder="e.g. Royal Leather Jacket" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Price (PKR)</label>
-                    <input type="number" class="form-control" id="pPrice" placeholder="e.g. 4500" required>
-                </div>
-
-                <!-- Main Image File -->
-                <div class="form-group">
-                    <label>Main Product Image</label>
-                    <div class="file-upload-box" onclick="document.getElementById('pMainFile').click()">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <p style="font-size:0.8rem; color:#666;">Choose main image</p>
+        <!-- Left Side Forms (Product + Banner Upload) -->
+        <div class="forms-wrapper">
+            
+            <!-- 1. Banner Post Upload Form -->
+            <div class="admin-card">
+                <h2>Add Offer / Banner Post</h2>
+                <form id="bannerForm">
+                    <div class="form-group">
+                        <label>Banner Post Image</label>
+                        <div class="file-upload-box" onclick="document.getElementById('bImgFile').click()">
+                            <i class="fa-solid fa-rectangle-ad"></i>
+                            <p style="font-size:0.8rem; color:#666;">Choose Banner Image</p>
+                        </div>
+                        <input type="file" id="bImgFile" accept="image/*" style="display:none;" onchange="previewBannerImg(event)">
+                        <div class="preview-container" id="bannerImgPreviewBox"></div>
                     </div>
-                    <input type="file" id="pMainFile" accept="image/*" style="display:none;" onchange="previewMainImg(event)">
-                    <div class="preview-container" id="mainImgPreviewBox"></div>
-                </div>
 
-                <!-- Angle Images File -->
-                <div class="form-group">
-                    <label>Additional Angle Images</label>
-                    <div class="file-upload-box" onclick="document.getElementById('pAngleFiles').click()">
-                        <i class="fa-solid fa-images"></i>
-                        <p style="font-size:0.8rem; color:#666;">Choose angle images</p>
+                    <div class="form-group">
+                        <label>Target Link / URL (Optional)</label>
+                        <input type="url" class="form-control" id="bTargetLink" placeholder="https://example.com/offer or #collections">
                     </div>
-                    <input type="file" id="pAngleFiles" accept="image/*" multiple style="display:none;" onchange="previewAngleImgs(event)">
-                    <div class="preview-container" id="angleImgsPreviewBox"></div>
-                </div>
 
-                <div class="form-group">
-                    <label>Product Description</label>
-                    <textarea class="form-control" id="pDesc" placeholder="Enter product details..." required></textarea>
-                </div>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-upload"></i> Upload Banner</button>
+                </form>
+            </div>
 
-                <button type="submit" class="btn-submit" id="saveBtn"><i class="fa-solid fa-plus"></i> Save Product</button>
-            </form>
+            <!-- 2. Product Upload Form -->
+            <div class="admin-card">
+                <h2 id="formHeading">Add New Product</h2>
+                <form id="productForm">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="form-control" id="pCategory" required>
+                            <option value="clothes">Clothes</option>
+                            <option value="shoes">Shoes</option>
+                            <option value="watches">Watches</option>
+                            <option value="perfumes">Perfumes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Title</label>
+                        <input type="text" class="form-control" id="pTitle" placeholder="e.g. Royal Leather Jacket" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price (PKR)</label>
+                        <input type="number" class="form-control" id="pPrice" placeholder="e.g. 4500" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Main Product Image</label>
+                        <div class="file-upload-box" onclick="document.getElementById('pMainFile').click()">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p style="font-size:0.8rem; color:#666;">Choose main image</p>
+                        </div>
+                        <input type="file" id="pMainFile" accept="image/*" style="display:none;" onchange="previewMainImg(event)">
+                        <div class="preview-container" id="mainImgPreviewBox"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Angle Images</label>
+                        <div class="file-upload-box" onclick="document.getElementById('pAngleFiles').click()">
+                            <i class="fa-solid fa-images"></i>
+                            <p style="font-size:0.8rem; color:#666;">Choose angle images</p>
+                        </div>
+                        <input type="file" id="pAngleFiles" accept="image/*" multiple style="display:none;" onchange="previewAngleImgs(event)">
+                        <div class="preview-container" id="angleImgsPreviewBox"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Description</label>
+                        <textarea class="form-control" id="pDesc" placeholder="Enter product details..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="saveBtn"><i class="fa-solid fa-plus"></i> Save Product</button>
+                </form>
+            </div>
+
         </div>
 
-        <!-- Inventory List Section -->
-        <div class="admin-card">
-            <h2>Product Inventory</h2>
-
-            <div class="controls-wrapper">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="searchInput" placeholder="Search product name..." onkeyup="fetchProducts()">
-                </div>
-                <div class="category-tabs">
-                    <button class="tab-btn active" onclick="setCategoryFilter('all', this)">All</button>
-                    <button class="tab-btn" onclick="setCategoryFilter('clothes', this)">Clothes</button>
-                    <button class="tab-btn" onclick="setCategoryFilter('shoes', this)">Shoes</button>
-                    <button class="tab-btn" onclick="setCategoryFilter('watches', this)">Watches</button>
-                    <button class="tab-btn" onclick="setCategoryFilter('perfumes', this)">Perfumes</button>
+        <!-- Right Side Data Tables (Banner Inventory + Product Inventory) -->
+        <div class="tables-wrapper">
+            
+            <!-- Active Banners List -->
+            <div class="admin-card">
+                <h2>Active Offer Banners</h2>
+                <div class="table-responsive">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Banner</th>
+                                <th>Link URL</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bannerTableBody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="product-table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inventoryTableBody">
-                    </tbody>
-                </table>
+            <!-- Product Inventory List -->
+            <div class="admin-card">
+                <h2>Product Inventory</h2>
+
+                <div class="controls-wrapper">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Search product name..." onkeyup="fetchProducts()">
+                    </div>
+                    <div class="category-tabs">
+                        <button class="tab-btn active" onclick="setCategoryFilter('all', this)">All</button>
+                        <button class="tab-btn" onclick="setCategoryFilter('clothes', this)">Clothes</button>
+                        <button class="tab-btn" onclick="setCategoryFilter('shoes', this)">Shoes</button>
+                        <button class="tab-btn" onclick="setCategoryFilter('watches', this)">Watches</button>
+                        <button class="tab-btn" onclick="setCategoryFilter('perfumes', this)">Perfumes</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="product-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         </div>
 
     </div>
 
 <script>
-  // ✅ Yeh bilkul sahi hai:
-const API_URL = "https://maha-enterprises-production.up.railway.app/api/products";
+    const API_URL = "https://maha-enterprises-production.up.railway.app/api/products";
+    const BANNER_API_URL = "https://maha-enterprises-production.up.railway.app/api/banners";
 
     const CLOUD_NAME = "ez2dqiwx"; 
     const UPLOAD_PRESET = "my_preset";
 
     let mainImageUrl = "";
     let angleImageUrls = [];
+    let bannerUploadedUrl = "";
     let currentCategoryFilter = "all";
 
     async function uploadToCloudinary(file) {
@@ -239,6 +290,109 @@ const API_URL = "https://maha-enterprises-production.up.railway.app/api/products
         return data.secure_url;
     }
 
+    /* --------------------------------------------------------------------------
+       1. BANNER UPLOAD & MANAGEMENT LOGIC
+       -------------------------------------------------------------------------- */
+    window.previewBannerImg = async function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const previewBox = document.getElementById("bannerImgPreviewBox");
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
+
+        try {
+            bannerUploadedUrl = await uploadToCloudinary(file);
+            previewBox.innerHTML = `<img src="${bannerUploadedUrl}" class="preview-img">`;
+        } catch (err) {
+            alert("Banner upload failed!");
+            previewBox.innerHTML = "";
+        }
+    };
+
+    document.getElementById("bannerForm")?.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        if (!bannerUploadedUrl) {
+            alert("Please choose a banner image first!");
+            return;
+        }
+
+        const bannerData = {
+            imageUrl: bannerUploadedUrl,
+            linkUrl: document.getElementById("bTargetLink").value || "#collections"
+        };
+
+        try {
+            const res = await fetch(BANNER_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(bannerData)
+            });
+
+            if (res.ok) {
+                alert("Banner Post Uploaded Successfully!");
+                this.reset();
+                bannerUploadedUrl = "";
+                document.getElementById("bannerImgPreviewBox").innerHTML = "";
+                fetchBanners();
+            } else {
+                alert("Failed to upload banner.");
+            }
+        } catch (err) {
+            console.error("Banner upload error:", err);
+            alert("Backend Connection Failed!");
+        }
+    });
+
+    window.fetchBanners = async function() {
+        try {
+            const res = await fetch(BANNER_API_URL);
+            if (!res.ok) return;
+
+            const result = await res.json();
+            const tbody = document.getElementById("bannerTableBody");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";
+            let banners = Array.isArray(result) ? result : (result.data || []);
+
+            if (banners.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:15px;">No Banners Found</td></tr>`;
+                return;
+            }
+
+            banners.forEach(b => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${b.imageUrl}" alt="Banner"></td>
+                        <td><a href="${b.linkUrl}" target="_blank" style="color:#e21b23; font-weight:600; text-decoration:none;">${b.linkUrl}</a></td>
+                        <td>
+                            <button class="btn-action btn-delete" onclick="deleteBanner('${b._id}')">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (err) {
+            console.error("Banner fetch error:", err);
+        }
+    };
+
+    window.deleteBanner = async function(id) {
+        if (confirm("Are you sure you want to delete this banner?")) {
+            try {
+                const res = await fetch(`${BANNER_API_URL}/${id}`, { method: "DELETE" });
+                if (res.ok) fetchBanners();
+            } catch (err) {
+                console.error("Delete banner error:", err);
+            }
+        }
+    };
+
+    /* --------------------------------------------------------------------------
+       2. PRODUCT UPLOAD & MANAGEMENT LOGIC
+       -------------------------------------------------------------------------- */
     window.previewMainImg = async function(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -389,7 +543,11 @@ const API_URL = "https://maha-enterprises-production.up.railway.app/api/products
         }
     });
 
-    document.addEventListener("DOMContentLoaded", fetchProducts);
+    // Initial load for both Banners and Products
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchBanners();
+        fetchProducts();
+    });
 </script>
 </body>
 </html>
