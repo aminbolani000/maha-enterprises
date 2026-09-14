@@ -57,34 +57,27 @@
         
         <!-- LEFT SIDE: Dynamic Auto-Sliding Post Banner -->
         <div class="banner-post-container">
+            <button class="banner-nav-btn banner-prev" id="bannerPrevBtn">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
             
-            <div class="banner-card-inner">
-                <button class="banner-nav-btn banner-prev" id="bannerPrevBtn">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                
-                <!-- Slider (Only Images) -->
-                <div class="banner-slider" id="bannerSlider">
-                    <!-- Default Placeholder Slide -->
-                    <div class="banner-slide active">
-                        <div class="banner-img-box">
-                            <img src="images/collections/clothes.jpg" alt="Special Offer">
-                        </div>
+            <div class="banner-slider" id="bannerSlider">
+                <!-- Slide 1 -->
+                <div class="banner-slide active">
+                    <div class="banner-img-box">
+                        <img src="images/collections/clothes.jpg" alt="Special Offer">
+                    </div>
+                    <div class="banner-action-bar">
+                        <a href="#collections" class="banner-visit-btn">
+                            VIEW POST DETAILS <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
                     </div>
                 </div>
-
-                <button class="banner-nav-btn banner-next" id="bannerNextBtn">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
             </div>
 
-            <!-- Action Button Outside/Below Card Area -->
-            <div class="banner-action-bar">
-                <a href="#collections" class="banner-visit-btn">
-                    SHOP NOW <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-
+            <button class="banner-nav-btn banner-next" id="bannerNextBtn">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
         </div>
 
         <!-- CENTER: Red Neon Divider Line -->
