@@ -516,6 +516,28 @@ h1, h2, h3, h4, .hero-title, .section-title {
             align-items: center;
         }
 
+/* Mobile View Responsiveness Fix */
+@media (max-width: 768px) {
+    .banner-wrapper {
+        flex-direction: column; /* Mobile par stack ho kar upar-niche aaye */
+        gap: 20px;
+    }
+
+    .banner-post-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important; /* Square ratio maintain rahega */
+    }
+
+    .banner-img-box img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important; /* Image bilkul stretch nahi hogi */
+        object-position: center !important;
+    }
+}
+
         .banner-visit-btn {
             background: #e21b23;
             color: #fff;
