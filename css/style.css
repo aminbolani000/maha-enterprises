@@ -420,7 +420,7 @@ h1, h2, h3, h4, .hero-title, .section-title {
             background: #1eb956;
         }
 
-       /* ==========================================================================
+      /* ==========================================================================
    DYNAMIC AUTO-SLIDING BANNER SECTION
    ========================================================================== */
 .banner-section {
@@ -439,7 +439,7 @@ h1, h2, h3, h4, .hero-title, .section-title {
     position: relative;
 }
 
-/* Container setup */
+/* Card Main Container */
 .banner-post-container {
     flex: 1;
     width: 100%;
@@ -454,30 +454,26 @@ h1, h2, h3, h4, .hero-title, .section-title {
 .banner-slider {
     position: relative;
     width: 100%;
-    /* Flexible height according to slides */
 }
 
+/* Base Slide Setup */
 .banner-slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-    transform: scale(0.97);
-    display: flex;
-    flex-direction: column;
+    display: none; /* Hide inactive slides completely */
     width: 100%;
-    visibility: hidden;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
 }
 
+/* Active Slide - Fully Visible & Clickable */
 .banner-slide.active {
-    position: relative; /* Active slide occupies layout space */
+    display: flex;
     opacity: 1;
-    transform: scale(1);
+    position: relative;
     z-index: 2;
-    visibility: visible;
 }
 
-/* 1080x1080 (1:1 Aspect Ratio) Perfect Square Frame */
+/* 1080x1080 (1:1 Aspect Ratio) Image Container */
 .banner-img-box {
     width: 100%;
     aspect-ratio: 1 / 1; 
@@ -488,12 +484,12 @@ h1, h2, h3, h4, .hero-title, .section-title {
 .banner-img-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Complete card fill karega bina kharab hue */
+    object-fit: cover; /* Fits full 1080x1080 cleanly without white borders */
     object-position: center;
     display: block;
 }
 
-/* Button Container cleanly BELOW the Image Card */
+/* Button Section Cleanly Below Image */
 .banner-action-bar {
     width: 100%;
     padding: 16px 12px;
@@ -502,11 +498,13 @@ h1, h2, h3, h4, .hero-title, .section-title {
     justify-content: center;
     align-items: center;
     border-top: 1px solid rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 10; /* Ensures button stays on top and fully clickable */
 }
 
 .banner-visit-btn {
     background: #e21b23;
-    color: #fff;
+    color: #ffffff;
     padding: 12px 28px;
     border-radius: 25px;
     text-decoration: none;
@@ -518,6 +516,7 @@ h1, h2, h3, h4, .hero-title, .section-title {
     gap: 8px;
     box-shadow: 0 4px 15px rgba(226, 27, 35, 0.4);
     transition: all 0.3s ease;
+    cursor: pointer;
     text-transform: uppercase;
 }
 
@@ -526,6 +525,34 @@ h1, h2, h3, h4, .hero-title, .section-title {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(226, 27, 35, 0.6);
 }
+
+/* Prev/Next Navigation Buttons Positioning */
+.banner-nav-btn {
+    position: absolute;
+    top: 40%; /* Positioned over image area only, away from bottom button */
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    cursor: pointer;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.banner-nav-btn:hover {
+    background: #e21b23;
+    color: #fff;
+}
+
+.banner-prev { left: 15px; }
+.banner-next { right: 15px; }
 
 /* Mobile View Adjustments */
 @media (max-width: 768px) {
@@ -538,7 +565,6 @@ h1, h2, h3, h4, .hero-title, .section-title {
         max-width: 100%;
     }
 }
-
 
         /* Navigation Controls for Slider */
         .banner-nav-btn {
