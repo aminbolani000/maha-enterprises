@@ -1401,6 +1401,110 @@ h1, h2, h3, h4, .hero-title, .section-title {
 
 
 
+/*ya navbr ka ha ok*/
+
+/* Header Base Setup */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px); /* Glassmorphism effect */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand-logo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #111;
+    text-decoration: none;
+}
+.brand-logo span { color: #e21b23; }
+
+.nav-menu { display: flex; gap: 24px; }
+.nav-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+}
+.nav-link:hover { color: #e21b23; }
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+
+.whatsapp-btn-header {
+    background: #25D366;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    color: #111;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+/* ================= MOBILE VIEW ADJUSTMENTS ================= */
+@media (max-width: 768px) {
+    .mobile-menu-btn { display: block; }
+
+    /* Hide text on header whatsapp button to fit screen nicely */
+    .whatsapp-btn-header span { display: none; }
+    .whatsapp-btn-header {
+        padding: 8px 12px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+    }
+
+    /* Dropdown Menu on Three Dots Click */
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        border-radius: 12px;
+        flex-direction: column;
+        gap: 0;
+        width: 180px;
+        overflow: hidden;
+        display: none; /* Initially hidden */
+        border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .nav-menu.active { display: flex; }
+
+    .nav-link {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .nav-link:last-child { border-bottom: none; }
+}
+
+
 
 
 
