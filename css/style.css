@@ -434,14 +434,16 @@ h1, h2, h3, h4, .hero-title, .section-title {
 .banner-wrapper {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 30px;
+    justify-content: center; /* Content ko horizontal center karega */
+    gap: 40px;
     position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Container setup */
 .banner-post-container {
-    flex: 1;
+    flex: 0 0 450px; /* Layout ko extra left push hone se rokega */
     width: 100%;
     max-width: 450px;
     position: relative;
@@ -545,6 +547,7 @@ h1, h2, h3, h4, .hero-title, .section-title {
     }
     
     .banner-post-container {
+        flex: 1;
         max-width: 100%;
     }
 
@@ -557,7 +560,6 @@ h1, h2, h3, h4, .hero-title, .section-title {
         font-size: 0.78rem;
     }
 }
-
         /* Navigation Controls for Slider */
         .banner-nav-btn {
             position: absolute;
