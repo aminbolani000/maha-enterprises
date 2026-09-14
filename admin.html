@@ -275,6 +275,7 @@
     let bannerUploadedUrl = "";
     let currentCategoryFilter = "all";
 
+    // Direct Cloudinary Upload Function
     async function uploadToCloudinary(file) {
         const formData = new FormData();
         formData.append("file", file);
@@ -285,7 +286,10 @@
             body: formData
         });
 
-        if (!res.ok) throw new Error("Cloudinary upload failed");
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error?.message || "Cloudinary upload failed");
+        }
         const data = await res.json();
         return data.secure_url;
     }
@@ -298,14 +302,27 @@
         if (!file) return;
 
         const previewBox = document.getElementById("bannerImgPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
+        const submitBtn = document.querySelector("#bannerForm .btn-submit");
+
+        // Show loader and disable button while uploading to Cloudinary
+        previewBox.innerHTML = `<p style="font-size:0.85rem; color:#e21b23; font-weight:600;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading image to cloud...</p>`;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.6";
+        }
 
         try {
             bannerUploadedUrl = await uploadToCloudinary(file);
             previewBox.innerHTML = `<img src="${bannerUploadedUrl}" class="preview-img">`;
         } catch (err) {
-            alert("Banner upload failed!");
+            alert("Image Upload Failed: " + err.message);
             previewBox.innerHTML = "";
+            bannerUploadedUrl = "";
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+            }
         }
     };
 
@@ -313,14 +330,23 @@
         e.preventDefault();
 
         if (!bannerUploadedUrl) {
-            alert("Please choose a banner image first!");
+            alert("Please wait for the image upload to complete, or select an image!");
             return;
         }
 
+        const targetUrlInput = document.getElementById("bTargetLink").value.trim();
+
+        // Pass variations to match MongoDB Schema requirements
         const bannerData = {
             imageUrl: bannerUploadedUrl,
-            linkUrl: document.getElementById("bTargetLink").value || "#collections"
+            image: bannerUploadedUrl,
+            linkUrl: targetUrlInput || "#collections",
+            link: targetUrlInput || "#collections"
         };
+
+        const submitBtn = this.querySelector(".btn-submit");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
 
         try {
             const res = await fetch(BANNER_API_URL, {
@@ -329,18 +355,23 @@
                 body: JSON.stringify(bannerData)
             });
 
-            if (res.ok) {
+            const resData = await res.json().catch(() => ({}));
+
+            if (res.ok || res.status === 201) {
                 alert("Banner Post Uploaded Successfully!");
                 this.reset();
                 bannerUploadedUrl = "";
                 document.getElementById("bannerImgPreviewBox").innerHTML = "";
                 fetchBanners();
             } else {
-                alert("Failed to upload banner.");
+                alert("Failed to save banner: " + (resData.message || resData.error || `Server status ${res.status}`));
             }
         } catch (err) {
             console.error("Banner upload error:", err);
-            alert("Backend Connection Failed!");
+            alert("Backend Connection Failed! Check if Railway service is active.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fa-solid fa-upload"></i> Upload Banner`;
         }
     });
 
@@ -362,10 +393,12 @@
             }
 
             banners.forEach(b => {
+                const img = b.imageUrl || b.image || "";
+                const link = b.linkUrl || b.link || "#";
                 tbody.innerHTML += `
                     <tr>
-                        <td><img src="${b.imageUrl}" alt="Banner"></td>
-                        <td><a href="${b.linkUrl}" target="_blank" style="color:#e21b23; font-weight:600; text-decoration:none;">${b.linkUrl}</a></td>
+                        <td><img src="${img}" alt="Banner"></td>
+                        <td><a href="${link}" target="_blank" style="color:#e21b23; font-weight:600; text-decoration:none;">${link}</a></td>
                         <td>
                             <button class="btn-action btn-delete" onclick="deleteBanner('${b._id}')">
                                 <i class="fa-solid fa-trash"></i> Delete
@@ -398,13 +431,13 @@
         if (!file) return;
 
         const previewBox = document.getElementById("mainImgPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</p>`;
 
         try {
             mainImageUrl = await uploadToCloudinary(file);
             previewBox.innerHTML = `<img src="${mainImageUrl}" class="preview-img">`;
         } catch (err) {
-            alert("Main image upload failed!");
+            alert("Main image upload failed: " + err.message);
             previewBox.innerHTML = "";
         }
     };
@@ -415,7 +448,7 @@
 
         angleImageUrls = [];
         const previewBox = document.getElementById("angleImgsPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</p>`;
 
         try {
             for (let file of files) {
@@ -427,7 +460,7 @@
                 previewBox.innerHTML += `<img src="${url}" class="preview-img">`;
             });
         } catch (err) {
-            alert("Angle images upload failed!");
+            alert("Angle images upload failed: " + err.message);
             previewBox.innerHTML = "";
         }
     };
@@ -543,7 +576,6 @@
         }
     });
 
-    // Initial load for both Banners and Products
     document.addEventListener("DOMContentLoaded", () => {
         fetchBanners();
         fetchProducts();
