@@ -275,9 +275,56 @@
     let bannerUploadedUrl = "";
     let currentCategoryFilter = "all";
 
+    /* --------------------------------------------------------------------------
+       OPTIMIZATION: Client-Side Image Compression Function
+       -------------------------------------------------------------------------- */
+    async function compressImage(file) {
+        // Skip non-image files
+        if (!file.type.startsWith('image/')) return file;
+
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const MAX_WIDTH = 1200; // Resize to max width 1200px
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            resolve(file); // Fallback to original if compression fails
+                            return;
+                        }
+                        resolve(new File([blob], file.name, { type: "image/jpeg", lastModified: Date.now() }));
+                    }, "image/jpeg", 0.7); // Compress to 70% quality
+                };
+                img.onerror = () => resolve(file);
+            };
+            reader.onerror = () => resolve(file);
+        });
+    }
+
     async function uploadToCloudinary(file) {
+        // Compress image before sending to Cloudinary
+        const compressedFile = await compressImage(file);
+
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", compressedFile);
         formData.append("upload_preset", UPLOAD_PRESET);
 
         const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
@@ -298,7 +345,7 @@
         if (!file) return;
 
         const previewBox = document.getElementById("bannerImgPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Compressing & Uploading...</p>`;
 
         try {
             bannerUploadedUrl = await uploadToCloudinary(file);
@@ -398,7 +445,7 @@
         if (!file) return;
 
         const previewBox = document.getElementById("mainImgPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Compressing & Uploading...</p>`;
 
         try {
             mainImageUrl = await uploadToCloudinary(file);
@@ -409,19 +456,19 @@
         }
     };
 
+    /* OPTIMIZATION: Parallel Multi-File Upload with Promise.all */
     window.previewAngleImgs = async function(event) {
         const files = Array.from(event.target.files);
         if (files.length === 0) return;
 
         angleImageUrls = [];
         const previewBox = document.getElementById("angleImgsPreviewBox");
-        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading...</p>`;
+        previewBox.innerHTML = `<p style="font-size:0.8rem; color:#888;">Uploading ${files.length} images in parallel...</p>`;
 
         try {
-            for (let file of files) {
-                const url = await uploadToCloudinary(file);
-                angleImageUrls.push(url);
-            }
+            // Promise.all runs all image uploads at the exact same time
+            angleImageUrls = await Promise.all(files.map(file => uploadToCloudinary(file)));
+            
             previewBox.innerHTML = "";
             angleImageUrls.forEach(url => {
                 previewBox.innerHTML += `<img src="${url}" class="preview-img">`;
