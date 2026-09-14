@@ -1403,24 +1403,23 @@ h1, h2, h3, h4, .hero-title, .section-title {
 
 /*ya navbr ka ha ok*/
 
-/* Header Base Setup */
-.main-header {
+/* Header & Navbar Setup */
+.navbar-header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px); /* Glassmorphism effect */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.nav-container {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 12px 20px;
+.navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 12px 20px;
+    position: relative;
 }
 
 .brand-logo {
@@ -1429,21 +1428,34 @@ h1, h2, h3, h4, .hero-title, .section-title {
     color: #111;
     text-decoration: none;
 }
-.brand-logo span { color: #e21b23; }
+.brand-logo .red { color: #e21b23; }
 
-.nav-menu { display: flex; gap: 24px; }
+.nav-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
 .nav-link {
     text-decoration: none;
-    color: #333;
+    color: #111;
     font-weight: 600;
     font-size: 0.95rem;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
 }
-.nav-link:hover { color: #e21b23; }
+.nav-link:hover, .nav-link.active {
+    color: #e21b23;
+}
 
-.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-.whatsapp-btn-header {
+.btn-wa {
     background: #25D366;
     color: #fff;
     padding: 8px 16px;
@@ -1454,54 +1466,88 @@ h1, h2, h3, h4, .hero-title, .section-title {
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: transform 0.2s;
 }
+.btn-wa:hover { transform: scale(1.03); }
 
 .mobile-menu-btn {
     display: none;
     background: transparent;
     border: none;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     color: #111;
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.mobile-menu-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
 }
 
-/* ================= MOBILE VIEW ADJUSTMENTS ================= */
+/* ================= MOBILE VIEW (COMPACT MINI POPUP) ================= */
 @media (max-width: 768px) {
     .mobile-menu-btn { display: block; }
 
-    /* Hide text on header whatsapp button to fit screen nicely */
-    .whatsapp-btn-header span { display: none; }
-    .whatsapp-btn-header {
+    /* Hide button text on small screens, keep icon neat */
+    .btn-wa span { display: none; }
+    .btn-wa {
         padding: 8px 12px;
         border-radius: 50%;
         font-size: 1.1rem;
     }
 
-    /* Dropdown Menu on Three Dots Click */
-    .nav-menu {
+    /* Mini Dropdown Card under 3 Dots */
+    .nav-links {
         position: absolute;
-        top: 100%;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.98);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        top: calc(100% + 5px);
+        right: 15px;
+        width: 160px; /* Modern compact width */
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
         border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
         flex-direction: column;
         gap: 0;
-        width: 180px;
-        overflow: hidden;
-        display: none; /* Initially hidden */
-        border: 1px solid rgba(0,0,0,0.08);
+        padding: 6px 0;
+        
+        /* Smooth Slide-Fade Animation */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1001;
     }
 
-    .nav-menu.active { display: flex; }
+    /* Active State (Shown when 3 dot clicked) */
+    .nav-links.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .nav-links li { width: 100%; }
 
     .nav-link {
-        padding: 12px 16px;
+        display: block;
+        padding: 10px 16px;
         font-size: 0.9rem;
-        border-bottom: 1px solid #f0f0f0;
+        font-weight: 600;
+        color: #222;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        transition: background 0.2s, color 0.2s;
     }
-    .nav-link:last-child { border-bottom: none; }
+
+    .nav-links li:last-child .nav-link {
+        border-bottom: none;
+    }
+
+    .nav-link:hover, .nav-link.active {
+        background: rgba(226, 27, 35, 0.08);
+        color: #e21b23;
+    }
 }
 
 
